@@ -1,4 +1,6 @@
-order_modules
-=============
+Ubersmith Order Modules
+=========================
 
-Ubersmith service module examples and client contributions.
+This repository includes a sample order module and includes user contributed code.
+
+Please include your service module and associated files in the om_include directory.
