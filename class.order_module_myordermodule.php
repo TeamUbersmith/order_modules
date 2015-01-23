@@ -83,10 +83,9 @@ class order_module_myordermodule extends order_module
 		if (empty($info['my_order_module'])) {
 			$order->info_set('my_order_module','You did it!');
 
-			echo '
-			<div>
-				<span>If you click process, you\'ll never see me again!</span>
-			</div>';
+			echo '<div><span>';
+			echo uber_i18n("If you click process, you'll never see me again!");
+			echo '</span></div>';
 
 			return false;
 		}
@@ -109,20 +108,16 @@ class order_module_myordermodule extends order_module
 		$info  = $order->info();
 
 		$sky = $this->config('my_option');
-
 		if (empty($sky)) {
-			$sky = 'dunno!';
+			$sky = uber_i18n('dunno!');
 		}
 
-		echo '
-		<div>
-			<span>Is the sky blue?: ' . h($sky) . '</span>
-		</div>';
+		echo '<div><span>';
+		echo h(uber_i18nf('Is the sky blue?: %s',$sky));
+		echo '</span></div>';
 
 		echo '<pre>';
-
-		var_dump($info);
-
+		ph(var_dump($info,true));
 		echo '</pre>';
 	}
 
