@@ -65,6 +65,47 @@ class order_module_myordermodule extends order_module
 	}
 
 	/**
+	 * An optional method for setting fields to display on order forms.
+	 *
+	 * @return array
+	 */
+	public static function fields()
+	{
+		return array(
+			'ach_acct' => array(
+				'type' => 'text',
+				'name' => 'acct',
+				'label' => uber_i18n('Account Number'),
+				'extra_label' => '',
+				'extra' => array(
+					'attributes' => array(
+						'size' => 16,
+					),
+				),
+				'rules' => array(),
+			),
+			'username' => array(
+				'label'   => uber_i18n('Username Style'),
+				'type'    => 'select',
+				'options' => array(
+					'email'    => uber_i18n('Email Address'),
+					'username' => uber_i18n('Ubersmith Username'),
+				),
+				'default' => 'email',
+			),
+			'discount_type' => array(
+				'type' => 'radio',
+				'name' => 'discount_type',
+				'label' => uber_i18n('Discount Type'),
+				'radio_group' => array(
+					'0' => '$',
+					'1' => '%',
+				),
+			),
+		);
+	}
+
+	/**
 	 * This function performs the main function of the order module, whatever
 	 * that may be. You can have the module call out to a remote service,
 	 * update the order in some way, or perform other tasks. To allow an
@@ -149,7 +190,6 @@ class order_module_myordermodule extends order_module
 			),
 		);
 	}
-
 }
 
 // end of script
