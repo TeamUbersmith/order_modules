@@ -125,7 +125,7 @@ class order_module_myordermodule extends order_module
 			$order->info_set('my_order_module','You did it!');
 
 			echo '<div><span>';
-			echo uber_i18n("If you click process, you'll never see me again!");
+			echo h(uber_i18n("If you click process, you'll never see me again!"));
 			echo '</span></div>';
 
 			return false;
