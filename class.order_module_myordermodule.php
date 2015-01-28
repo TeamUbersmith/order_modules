@@ -6,8 +6,7 @@
  * You will want to change order_module_myordermodule to something a little
  * more descriptive, however be sure to retain the order_module_ prefix.
  *
- * When complete, place your finished device module into
- * include/order_modules/
+ * When complete, place your finished module into include/order_modules/
  *
  * @package ubersmith_customizations
  */
