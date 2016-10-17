@@ -1,53 +1,46 @@
 <?php
-
 /**
  * My Order Module
- *
- * You will want to change order_module_myordermodule to something a little
- * more descriptive, however be sure to retain the order_module_ prefix.
- *
- * When complete, place your finished module into include/order_modules/
- *
- * @package ubersmith_customizations
  */
 
 /**
  * My Order Module Class
  *
- * @package ubersmith_customizations
+ * Please change the class name from "order_module_sample" to something descriptive, 
+ * but retain the "order_module_" prefix to ensure that it's detected by Ubersmith. 
+ * Please review the existing modules there and make sure you don't choose 
+ * a filename that has already been used. This file will need to be named 
+ * whatever this class is called with a ".php" extension.
+ *
+ * When you're ready to use your module, simply place this file in the 
+ * "include/order_modules/" subdirectory of your Ubersmith base directory.
  */
-class order_module_myordermodule extends order_module
+class order_module_sample extends order_module
 {
 	/**
-	 * 'interactive' determines whether or not the order module should display
-	 * a popup to allow the administrator to change settings, make a
-	 * selection, etc.  If the order module is only meant to process an action
+	 * 'interactive' determines whether or not the order module should display 
+	 * a popup to allow the administrator to change settings, make a 
+	 * selection, etc.  If the order module is only meant to process an action 
 	 * without any additional input, set 'interactive' to false.
-	 *
-	 * @var bool
 	 */
 	public $interactive = true;
 
 	/**
-	 * 'complete_view' indicates whether the order module has data to display
-	 * after processing has been completed. For example, a module that
-	 * performs fraud detection may have some output which would be useful to
-	 * display to the administrator. If you want the module to display data
-	 * after completion, set 'complete_view' to true. A module which simply
-	 * sends an email or performs some simple task may not have any
+	 * 'complete_view' indicates whether the order module has data to display 
+	 * after processing has been completed. For example, a module that 
+	 * performs fraud detection may have some output which would be useful to 
+	 * display to the administrator. If you want the module to display data 
+	 * after completion, set 'complete_view' to true. A module which simply 
+	 * sends an email or performs some simple task may not have any 
 	 * data to display. In this case, set 'complete_view' to false.
-	 *
-	 * @var bool
 	 */
 	public $complete_view = true;
 
 	/**
-	 * 'reprocess' determines if a module should be able to be run more than
-	 * once. This is useful for modules that reach out to an external service
-	 * that may require an additional call, or a call once order data has
+	 * 'reprocess' determines if a module should be able to be run more than 
+	 * once. This is useful for modules that reach out to an external service 
+	 * that may require an additional call, or a call once order data has 
 	 * been updated.
-	 *
-	 * @var bool
 	 */
 	public $reprocess = false;
 
