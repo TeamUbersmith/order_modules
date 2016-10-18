@@ -42,7 +42,7 @@ class order_module_sample extends order_module
 	 * that may require an additional call, or a call once order data has 
 	 * been updated.
 	 */
-	public $reprocess = false;
+	public $reprocess = true;
 
 	/**
 	 * The name of the order module. This title will be shown in your order
@@ -53,7 +53,7 @@ class order_module_sample extends order_module
 	 */
 	public static function name()
 	{
-		return uber_i18n('My Order Module');
+		return uber_i18n('IFTTT Event');
 	}
 
 	/**
@@ -63,6 +63,7 @@ class order_module_sample extends order_module
 	 */
 	public static function fields()
 	{
+//TODO: evaluate this
 		return array(
 			'ach_acct' => array(
 				'type' => 'text',
@@ -112,7 +113,28 @@ class order_module_sample extends order_module
 		$order =& $this->order;
 		$data  = $order->data();
 		$info  = $order->info();
+		
+		// Set key
+		$key = $this->config('ifttt_maker_key');
+		if (empty($key)) {
+//TODO: bail with an error
+		}
+		
+		// Set event
+		$event = $this->config('ifttt_maker_event');
+		if (empty($event)) {
+//TODO: bail with an error
+		}
+		
+		// Set Values
+		$value1_key = $this->config('value1');
+		if (empty($value1_key)) {
+			$value1 = '';
+		} else {
+			$value1 = empty($info[$value1_key]) ? '' : $info[$value1_key];
+		}
 
+/*
 		if (empty($info['my_order_module'])) {
 			$order->info_set('my_order_module','You did it!');
 
@@ -122,7 +144,39 @@ class order_module_sample extends order_module
 
 			return false;
 		}
+*/
+		// Initialize cURL client
+		$client = new uber_http_client();
 
+		// Fill data for parameters
+		$request = [
+			"value1" => $value1,
+			"value2" => "value two",
+			"value3" => "value three"
+		];
+		
+		// Set headers for JSON request
+		$headers = [
+			'Content-Type: application/json',
+		];
+		
+		// Execute request to IFTTT Maker
+		$url = 'https://maker.ifttt.com/trigger/'. u($event) .'/with/key/'. u($key);
+		$result = $client->post(
+			$url,
+			json_encode($request),
+			$headers
+		);
+		if (PEAR::isError($result)) {
+			return $result;
+		}
+		
+		// Save response from IFTTT Maker in order info with date and time stamps
+		$this->order->info_set('ifttt_maker_response',[
+			'ts'   => d() .' '. t(),
+			'text' => $result
+		]);
+		
 		return true;
 	}
 
@@ -139,6 +193,25 @@ class order_module_sample extends order_module
 		$order =& $this->order;
 		$data  = $order->data();
 		$info  = $order->info();
+		
+$response = $this->order->info('ifttt_maker_response');
+echo '<div>';
+if (!empty($response)) {
+	echo '<span style="color: #4a4a4a">'. h('Last successful response ['. $response['ts'] .']:') .'</span><br>'. $response['text'];
+} else {
+	echo '<span style="color: #4a4a4a">'. h('No response from IFTTT yet') .'</span>';
+}
+echo '<br><br><span style="color: #4a4a4a"><a target="_new" href="https://internal-api.ifttt.com/myrecipes/personal">View or create your IFTTT Recipes</a></span>';
+echo '<br><br><span style="color: #4a4a4a"><a target="_new" href="https://internal-api.ifttt.com/maker">View Maker Channel</a></span>';
+echo '</div>';
+
+/*
+echo '<pre>';
+ph(var_dump($info,true));
+echo '</pre>';
+*/
+
+return true;
 
 		$sky = $this->config('my_option');
 		if (empty($sky)) {
@@ -164,21 +237,46 @@ class order_module_sample extends order_module
 	 */
 	public function config_items()
 	{
+		$fields = [
+			'ip_address'   => uber_i18n('IP Address'),
+			'client_id'    => uber_i18n('Client ID'),
+			'first'        => uber_i18n('First Name'),
+			'last'         => uber_i18n('Last Name'),
+			'company'      => uber_i18n('Company'),
+			'email'        => uber_i18n('Email'),
+			'uber_login'   => uber_i18n('Ubersmith Login Name'),
+			'address'      => uber_i18n('Address'),
+			'city'         => uber_i18n('City'),
+			'state'        => uber_i18n('State'),
+			'zip'          => uber_i18n('Zip Code'),
+			'country'      => uber_i18n('Country/Territory'),
+//			'full_address' => uber_i18n('Full Address'),
+			'phone'        => uber_i18n('Phone'),
+		];
+		
 		return array(
-			'my_textfield' => array(
-				'label'  => uber_i18n('A Text Field'),
-				'type'   => 'text',
-				'size'   => '20',
-				'default'=> '',
+			'ifttt_maker_key' => array(
+				'label'   => uber_i18n('Maker Channel Key'),
+				'type'    => 'text',
+				'size'    => '32',
+				'default' => '',
+				'class'   => 'input_required',
+//				'required' => true
 			),
-			'my_option' => array(
-				'label'   => uber_i18n('Is the sky blue?'),
+			'ifttt_maker_event' => array(
+				'label'   => uber_i18n('Maker Event Name'),
+				'type'    => 'text',
+				'size'    => '32',
+				'default' => 'ubersmith_order',
+				'class'   => 'input_required',
+//				'required' => true
+			),
+//TODO: make these an edit/select combo box if possible, add value2 and value3
+			'value1' => array(
+				'label'   => uber_i18n('Value 1'),
 				'type'    => 'select',
-				'options' => array(
-					'yes' => uber_i18n('Yes'),
-					'no' => uber_i18n('No'),
-				),
-				'default' => 'false',
+				'options' => $fields,
+//				'default' => 'false',
 			),
 		);
 	}
