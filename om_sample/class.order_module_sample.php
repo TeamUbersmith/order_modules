@@ -97,7 +97,7 @@ class order_module_sample extends order_module
 			),
 		);
 	}
-
+	
 	/**
 	 * This function performs the main function of the order module, whatever
 	 * that may be. You can have the module call out to a remote service,
@@ -117,13 +117,13 @@ class order_module_sample extends order_module
 		// Set key
 		$key = $this->config('ifttt_maker_key');
 		if (empty($key)) {
-//TODO: bail with an error
+			return PEAR::raiseError('No API key specified',1);
 		}
 		
 		// Set event
 		$event = $this->config('ifttt_maker_event');
 		if (empty($event)) {
-//TODO: bail with an error
+			return PEAR::raiseError('No event specified',1);
 		}
 		
 		// Set Values
@@ -133,21 +133,16 @@ class order_module_sample extends order_module
 		} else {
 			$value1 = empty($info[$value1_key]) ? '' : $info[$value1_key];
 		}
-
-/*
-		if (empty($info['my_order_module'])) {
-			$order->info_set('my_order_module','You did it!');
-
-			echo '<div><span>';
-			echo h(uber_i18n("If you click process, you'll never see me again!"));
-			echo '</span></div>';
-
+		
+		if (empty($info['ifttt_maker_response'])) {
+			echo '<span style="color: #4a4a4a">'. h('No response from IFTTT yet. Please process the appropriate step.') .'</span>';
+			
 			return false;
 		}
-*/
+		
 		// Initialize cURL client
 		$client = new uber_http_client();
-
+		
 		// Fill data for parameters
 		$request = [
 			"value1" => $value1,
@@ -194,37 +189,23 @@ class order_module_sample extends order_module
 		$data  = $order->data();
 		$info  = $order->info();
 		
-$response = $this->order->info('ifttt_maker_response');
-echo '<div>';
-if (!empty($response)) {
-	echo '<span style="color: #4a4a4a">'. h('Last successful response ['. $response['ts'] .']:') .'</span><br>'. $response['text'];
-} else {
-	echo '<span style="color: #4a4a4a">'. h('No response from IFTTT yet') .'</span>';
-}
-echo '<br><br><span style="color: #4a4a4a"><a target="_new" href="https://internal-api.ifttt.com/myrecipes/personal">View or create your IFTTT Recipes</a></span>';
-echo '<br><br><span style="color: #4a4a4a"><a target="_new" href="https://internal-api.ifttt.com/maker">View Maker Channel</a></span>';
-echo '</div>';
-
+		$response = $this->order->info('ifttt_maker_response');
+		echo '<div>';
+		if (!empty($response)) {
+			echo '<span style="color: #4a4a4a">'. h('Last successful response ['. $response['ts'] .']:') .'</span><br>'. $response['text'];
+		} else {
+			echo '<span style="color: #4a4a4a">'. h('No response from IFTTT yet') .'</span>';
+		}
+		echo '<br><br><span style="color: #4a4a4a"><a target="_blank" href="https://internal-api.ifttt.com/myrecipes/personal">View or create your IFTTT Recipes</a></span>';
+		echo '<br><br><span style="color: #4a4a4a"><a target="_blank" href="https://internal-api.ifttt.com/maker">View Maker Channel</a></span>';
+		echo '</div>';
+		
 /*
 echo '<pre>';
 ph(var_dump($info,true));
 echo '</pre>';
 */
-
-return true;
-
-		$sky = $this->config('my_option');
-		if (empty($sky)) {
-			$sky = uber_i18n('dunno!');
-		}
-
-		echo '<div><span>';
-		echo h(uber_i18nf('Is the sky blue?: %s',$sky));
-		echo '</span></div>';
-
-		echo '<pre>';
-		ph(var_dump($info,true));
-		echo '</pre>';
+		return true;
 	}
 
 	/**
@@ -250,35 +231,46 @@ return true;
 			'state'        => uber_i18n('State'),
 			'zip'          => uber_i18n('Zip Code'),
 			'country'      => uber_i18n('Country/Territory'),
-//			'full_address' => uber_i18n('Full Address'),
 			'phone'        => uber_i18n('Phone'),
 		];
 		
-		return array(
-			'ifttt_maker_key' => array(
+		return [
+			'ifttt_maker_key' => [
 				'label'   => uber_i18n('Maker Channel Key'),
 				'type'    => 'text',
 				'size'    => '32',
 				'default' => '',
 				'class'   => 'input_required',
 //				'required' => true
-			),
-			'ifttt_maker_event' => array(
+			],
+			'ifttt_maker_event' => [
 				'label'   => uber_i18n('Maker Event Name'),
 				'type'    => 'text',
 				'size'    => '32',
 				'default' => 'ubersmith_order',
 				'class'   => 'input_required',
 //				'required' => true
-			),
-//TODO: make these an edit/select combo box if possible, add value2 and value3
-			'value1' => array(
+			],
+//TODO: make these an edit/select combo box if possible
+			'value1' => [
 				'label'   => uber_i18n('Value 1'),
 				'type'    => 'select',
 				'options' => $fields,
-//				'default' => 'false',
-			),
-		);
+				'default' => 'ip_address',
+			],
+			'value2' => [
+				'label'   => uber_i18n('Value 2'),
+				'type'    => 'select',
+				'options' => $fields,
+				'default' => 'first',
+			],
+			'value3' => [
+				'label'   => uber_i18n('Value 3'),
+				'type'    => 'select',
+				'options' => $fields,
+				'default' => 'last',
+			],
+		];
 	}
 }
 
