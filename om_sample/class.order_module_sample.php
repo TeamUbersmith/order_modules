@@ -115,8 +115,8 @@ class order_module_sample extends order_module
 		$info  = $order->info();
 		
 		// Set key
-		$key = $this->config('ifttt_maker_key');
-		if (empty($key)) {
+		$api_key = $this->config('ifttt_maker_key');
+		if (empty($api_key)) {
 			return PEAR::raiseError('No API key specified',1);
 		}
 		
@@ -127,12 +127,16 @@ class order_module_sample extends order_module
 		}
 		
 		// Set Values
-		$value1_key = $this->config('value1');
-		if (empty($value1_key)) {
-			$value1 = '';
-		} else {
-			$value1 = empty($info[$value1_key]) ? '' : $info[$value1_key];
+		$values = [];
+		for ($counter = 1; $counter <= 3; $counter++) {
+			$key = $this->config('value'. $counter);
+			if (empty($key)) {
+				$values[$counter] = '';
+			} else {
+				$values[$counter] = empty($info[$key]) ? '' : $info[$key];
+			}
 		}
+		unset($key);
 		
 		if (empty($info['ifttt_maker_response'])) {
 			echo '<span style="color: #4a4a4a">'. h('No response from IFTTT yet. Please process the appropriate step.') .'</span>';
@@ -144,11 +148,10 @@ class order_module_sample extends order_module
 		$client = new uber_http_client();
 		
 		// Fill data for parameters
-		$request = [
-			"value1" => $value1,
-			"value2" => "value two",
-			"value3" => "value three"
-		];
+		$request = [];
+		foreach ($values as $key => $value) {
+			$request['value'. $key] = $value;
+		}
 		
 		// Set headers for JSON request
 		$headers = [
@@ -156,7 +159,7 @@ class order_module_sample extends order_module
 		];
 		
 		// Execute request to IFTTT Maker
-		$url = 'https://maker.ifttt.com/trigger/'. u($event) .'/with/key/'. u($key);
+		$url = 'https://maker.ifttt.com/trigger/'. u($event) .'/with/key/'. u($api_key);
 		$result = $client->post(
 			$url,
 			json_encode($request),
