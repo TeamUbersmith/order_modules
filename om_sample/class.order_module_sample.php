@@ -23,7 +23,7 @@ class order_module_sample extends order_module
 	 * selection, etc.  If the order module is only meant to process an action 
 	 * without any additional input, set 'interactive' to false.
 	 */
-	public $interactive = true;
+	public $interactive = false;
 
 	/**
 	 * 'complete_view' indicates whether the order module has data to display 
@@ -53,7 +53,7 @@ class order_module_sample extends order_module
 	 */
 	public static function name()
 	{
-		return uber_i18n('IFTTT Event');
+		return 'IFTTT Event';
 	}
 
 	/**
@@ -171,8 +171,8 @@ class order_module_sample extends order_module
 		
 		// Save response from IFTTT Maker in order info with date and time stamps
 		$this->order->info_set('ifttt_maker_response',[
-			'ts'   => d() .' '. t(),
-			'text' => $result
+			'ts'   => date('M j Y g:i:s A'), // Current date and time
+			'text' => $result // Response to request
 		]);
 		
 		return true;
@@ -203,11 +203,6 @@ class order_module_sample extends order_module
 		echo '<br><br><span style="color: #4a4a4a"><a target="_blank" href="https://internal-api.ifttt.com/maker">View Maker Channel</a></span>';
 		echo '</div>';
 		
-/*
-echo '<pre>';
-ph(var_dump($info,true));
-echo '</pre>';
-*/
 		return true;
 	}
 
@@ -243,18 +238,15 @@ echo '</pre>';
 				'type'    => 'text',
 				'size'    => '32',
 				'default' => '',
-				'class'   => 'input_required',
-//				'required' => true
+				'class'   => 'input_required', // Will trigger an error if empty
 			],
 			'ifttt_maker_event' => [
 				'label'   => uber_i18n('Maker Event Name'),
 				'type'    => 'text',
 				'size'    => '32',
 				'default' => 'ubersmith_order',
-				'class'   => 'input_required',
-//				'required' => true
+				'class'   => 'input_required', // Will trigger an error if empty
 			],
-//TODO: make these an edit/select combo box if possible
 			'value1' => [
 				'label'   => uber_i18n('Value 1'),
 				'type'    => 'select',
