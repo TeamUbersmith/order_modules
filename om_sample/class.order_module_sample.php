@@ -21,7 +21,10 @@ class order_module_sample extends order_module
 	 * 'interactive' determines whether or not the order module should display 
 	 * a popup to allow the administrator to change settings, make a 
 	 * selection, etc.  If the order module is only meant to process an action 
-	 * without any additional input, set 'interactive' to false.
+	 * without any additional input, set 'interactive' to false. 
+	 * If you set this to true, you can then output some HTML for a popup 
+	 * and apply conditional logic in the process() method, and choose to 
+	 * delay returning true until certain conditions are met.
 	 */
 	public $interactive = false;
 
@@ -175,6 +178,8 @@ class order_module_sample extends order_module
 			'text' => $result // Response to request
 		]);
 		
+		// If you wish to make this order module interactive, 
+		// do not return true until your conditions are met.
 		return true;
 	}
 
