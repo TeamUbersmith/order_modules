@@ -67,9 +67,17 @@ class order_module_sample extends order_module
 	 * 'false' until an expected input or other interaction has been provided.
 	 * Then, return 'true'.
 	 *
+	 * $auto is passed by core when the order queue is advanced automatically
+	 * (e.g. by cron), and is null/absent for an interactive administrator
+	 * action. $interface holds any submitted popup/interface field values
+	 * when this module is interactive. Neither is required if your module
+	 * doesn't need to distinguish these cases.
+	 *
+	 * @param mixed $auto
+	 * @param mixed $interface
 	 * @return bool
 	 */
-	public function process()
+	public function process($auto = null, $interface = '')
 	{
 		$order =& $this->order;
 		$data  = $order->data();
@@ -228,8 +236,75 @@ class order_module_sample extends order_module
 				'options' => $fields,
 				'default' => 'last',
 			],
+			// A few other config_items() field types available besides
+			// 'text' and 'select', for reference:
+			'notify_admin' => [
+				'label'   => uber_i18n('Notify Administrators?'),
+				'type'    => 'yesno',
+				'default' => '0',
+			],
+			'log_response' => [
+				'label'   => uber_i18n('Log IFTTT Response'),
+				'type'    => 'checkbox',
+				'default' => '',
+			],
+			'notes' => [
+				'label'   => uber_i18n('Notes'),
+				'type'    => 'textarea',
+				'rows'    => 4,
+				'cols'    => 50,
+				'default' => '',
+			],
 		];
 	}
+
+	/*
+	 * The following hooks are optional and not required by the base
+	 * order_module class. Core only calls them if your module defines
+	 * them, so leave them out entirely unless you need them.
+	 */
+
+	/**
+	 * Optional hook called by the order action popup when the administrator
+	 * submits the interface form for an interactive module, before
+	 * process() runs. $interface contains the submitted field values.
+	 * Return a PEAR_Error to block submission, or null/void to allow it.
+	 *
+	 * @param array $interface
+	 * @return mixed
+	 */
+	// public function onsubmit($interface)
+	// {
+	// 	if (empty($interface['some_required_field'])) {
+	// 		return PEAR::raiseError(uber_i18n('Some Required Field is required'));
+	// 	}
+	// }
+
+	/**
+	 * Optional hook returning extra CSS to be included alongside this
+	 * module's interactive popup, for styling fields output by view().
+	 *
+	 * @return string
+	 */
+	// public function action_css()
+	// {
+	// 	return '.my-module-field { font-weight: bold; }';
+	// }
+
+	/**
+	 * Optional hook allowing a module to display a deprecation warning
+	 * (e.g. if it depends on a feature or integration Ubersmith is
+	 * phasing out). Return a string, or an array of strings to render as
+	 * separate paragraphs, and core will render it via
+	 * deprecated_message_wrapper(). Return null (the default) if your
+	 * module has no deprecation notice.
+	 *
+	 * @return mixed
+	 */
+	// public function deprecated_message()
+	// {
+	// 	return uber_i18n('This module depends on a service that will be removed in a future release.');
+	// }
 }
 
 // end of script
